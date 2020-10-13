@@ -31,7 +31,8 @@ class RoutingMiddleware implements MiddlewareInterface
         if (null === $route) {
             throw new RuntimeException("Cannot find matching route.");
         }
-        return container()->call($route->getHandler());
+        $request = $request->withAttribute('route', $route);
+        return $handler->handle($request);
     }
 
 }

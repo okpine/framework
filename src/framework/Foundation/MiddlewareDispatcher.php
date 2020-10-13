@@ -14,11 +14,21 @@ class MiddlewareDispatcher implements RequestHandlerInterface
      */
     private $middleware = [];
 
+    /**
+     * @var RouteHandler
+     */
+    private $routeHandler;
+
+
+    public function __construct(RouteHandler $routeHandler)
+    {
+        $this->routeHandler = $routeHandler;
+    }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (0 === count($this->middleware)) {
-            throw new RuntimeException("Middleware does not exist");
+            return $this->routeHandler->handle($request);
         }
         $middleware = array_shift($this->middleware);
         $middleware = get($middleware);

@@ -1,7 +1,6 @@
 <?php
 
 use Demo\Framework\Routing\Router;
-use Nyholm\Psr7\Response;
 
 use function Demo\Framework\Foundation\response;
 

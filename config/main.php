@@ -19,5 +19,4 @@ return [
     \Psr\Http\Message\UriFactoryInterface::class => get(\Nyholm\Psr7\Factory\Psr17Factory::class),
     \Psr\Http\Message\StreamFactoryInterface::class => get(\Nyholm\Psr7\Factory\Psr17Factory::class),
     \Psr\Http\Message\UploadedFileFactoryInterface::class => get(\Nyholm\Psr7\Factory\Psr17Factory::class),
-    \Psr\Http\Message\ServerRequestInterface::class => factory('\Nyholm\Psr7Server\ServerRequestCreator::fromGlobals'),
 ];

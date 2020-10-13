@@ -31,19 +31,21 @@ class WebApplication
     public function run()
     {
         $this->boot();
-        $request = $this->container->get(ServerRequestInterface::class);
+        $request = $this->createRequestFromGlobals();
         $response = $this->middlewareDispatcher->handle($request);
         $this->sendResponse($response);
     }
 
     public function boot()
     {
+        // container
         $builder = new \DI\ContainerBuilder();
         $builder->addDefinitions(path('config/main.php'));
         $container = $builder->build();
         $this->setContainer($container);
 
-        $this->middlewareDispatcher = new MiddlewareDispatcher();
+        // middleware
+        $this->middlewareDispatcher = new MiddlewareDispatcher(new RouteHandler());
         $middleware = require path('config/middleware.php');
         foreach ($middleware as $m) {
             $this->middlewareDispatcher->add($m);
@@ -84,6 +86,15 @@ class WebApplication
     public static function setInstance($instance)
     {
         return static::$instance = $instance;
+    }
+
+    public function createRequestFromGlobals()
+    {
+        /** @var \Nyholm\Psr7Server\ServerRequestCreator */
+        $factory = get(\Nyholm\Psr7Server\ServerRequestCreator::class);
+        $request = $factory->fromGlobals();
+        $this->container->set(\Psr\Http\Message\ServerRequestInterface::class, $request);
+        return $request;
     }
 
     public function sendResponse(ResponseInterface $response)

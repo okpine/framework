@@ -12,7 +12,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (isset($_GET['p']) && $_GET['p'] == 123) {
-            dump("Authorization Success!");
+            $request = $request->withAttribute('auth', 'Authorization Success');
             return $handler->handle($request);
         } else {
             $response = new Response();
