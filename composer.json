@@ -1,0 +1,30 @@
+{
+    "name": "demo/framework",
+    "type": "project",
+    "description": "The Demo Framework.",
+    "keywords": [
+        "framework",
+        "Demo"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Demo\\App\\": "src/web",
+            "Demo\\Framework\\": "src/framework"
+        },
+        "files": [
+            "src/framework/Foundation/functions.php"
+        ]
+    },
+    "require": {
+        "php-di/php-di": "^6.2",
+        "nyholm/psr7": "^1.3",
+        "slim/psr7": "^1.2",
+        "psr/http-server-middleware": "^1.0",
+        "psr/http-server-handler": "^1.0",
+        "monolog/monolog": "^2.1",
+        "symfony/var-dumper": "^5.1"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
