@@ -2,11 +2,10 @@
 namespace Demo\Framework\Foundation;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
-class WebApplication implements RequestHandlerInterface
+
+class WebApplication
 {
     /**
      * @var static
@@ -19,12 +18,12 @@ class WebApplication implements RequestHandlerInterface
 
     private $middlewareDispatcher;
 
+
     public function __construct($projectDir = null)
     {
         if ($projectDir) {
             $this->setProjectDir($projectDir);
         }
-        $this->middlewareDispatcher = new MiddlewareDispatcher();
         static::setInstance($this);
     }
 
@@ -33,7 +32,7 @@ class WebApplication implements RequestHandlerInterface
     {
         $this->boot();
         $request = $this->container->get(ServerRequestInterface::class);
-        $response = $this->handle($request);
+        $response = $this->middlewareDispatcher->handle($request);
         $this->sendResponse($response);
     }
 
@@ -43,15 +42,12 @@ class WebApplication implements RequestHandlerInterface
         $builder->addDefinitions($this->getProjectDir() . '/config/main.php');
         $container = $builder->build();
         $this->setContainer($container);
-    }
 
-    public function handle(ServerRequestInterface $request): ResponseInterface
-    {
+        $this->middlewareDispatcher = new MiddlewareDispatcher();
         $middleware = require $this->getProjectDir() . '/config/middleware.php';
         foreach ($middleware as $m) {
             $this->middlewareDispatcher->add($m);
         }
-        return $this->middlewareDispatcher->handle($request);
     }
 
     public function getProjectDir()
