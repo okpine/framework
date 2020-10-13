@@ -32,7 +32,7 @@ class WebApplication implements RequestHandlerInterface
     public function run()
     {
         $this->boot();
-        $request = $this->createServerRequest();
+        $request = $this->container->get(ServerRequestInterface::class);
         $response = $this->handle($request);
         $this->sendResponse($response);
     }
@@ -89,13 +89,6 @@ class WebApplication implements RequestHandlerInterface
     {
         return static::$instance = $instance;
     }
-
-    public function createServerRequest()
-    {
-        $factory = $this->getContainer()->get(ServerRequestFactoryInterface::class);
-        return $factory->createServerRequest($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
-    }
-
 
     public function sendResponse(ResponseInterface $response)
     {
