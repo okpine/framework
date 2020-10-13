@@ -39,12 +39,12 @@ class WebApplication
     public function boot()
     {
         $builder = new \DI\ContainerBuilder();
-        $builder->addDefinitions($this->getProjectDir() . '/config/main.php');
+        $builder->addDefinitions(path('config/main.php'));
         $container = $builder->build();
         $this->setContainer($container);
 
         $this->middlewareDispatcher = new MiddlewareDispatcher();
-        $middleware = require $this->getProjectDir() . '/config/middleware.php';
+        $middleware = require path('config/middleware.php');
         foreach ($middleware as $m) {
             $this->middlewareDispatcher->add($m);
         }

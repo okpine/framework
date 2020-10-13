@@ -8,7 +8,6 @@ use function DI\get;
 $projectDir = dirname(__DIR__);
 
 return [
-    'projectDir' => $projectDir,
     'db' => [
         'host' => 'localhost',
         'port' => 3306,

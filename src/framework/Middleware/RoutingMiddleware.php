@@ -10,6 +10,7 @@ use RuntimeException;
 
 use function Demo\Framework\Foundation\container;
 use function Demo\Framework\Foundation\get;
+use function Demo\Framework\Foundation\path;
 
 class RoutingMiddleware implements MiddlewareInterface
 {
@@ -20,7 +21,7 @@ class RoutingMiddleware implements MiddlewareInterface
 
     public function __construct(Router $router)
     {
-        $fun = require get('projectDir').'/config/routes.php';
+        $fun = require path('config/routes.php');
         $this->router = $fun($router);
     }
 

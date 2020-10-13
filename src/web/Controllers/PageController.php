@@ -3,12 +3,12 @@ namespace Demo\App\Controllers;
 
 use Nyholm\Psr7\Response;
 
+use function Demo\Framework\Foundation\response;
+
 class PageController
 {
     public function about()
     {
-        $response = new Response();
-        $response->getBody()->write("About");
-        return $response;
+        return response('about');
     }
 }
