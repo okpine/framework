@@ -3,9 +3,9 @@ namespace Demo\Framework\Foundation;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-
-class WebApplication
+class WebApplication implements RequestHandlerInterface
 {
     /**
      * @var static
@@ -32,9 +32,16 @@ class WebApplication
     {
         $this->boot();
         $request = $this->createRequestFromGlobals();
-        $response = $this->middlewareDispatcher->handle($request);
+        $response = $this->handle($request);
         $this->sendResponse($response);
     }
+
+
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        return $this->middlewareDispatcher->handle($request);
+    }
+
 
     public function boot()
     {

@@ -21,16 +21,12 @@ class RoutingMiddleware implements MiddlewareInterface
 
     public function __construct(Router $router)
     {
-        $fun = require path('config/routes.php');
-        $this->router = $fun($router);
+        $this->router = $router;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $route = $this->router->match($request);
-        if (null === $route) {
-            throw new RuntimeException("Cannot find matching route.");
-        }
         $request = $request->withAttribute('route', $route);
         return $handler->handle($request);
     }
