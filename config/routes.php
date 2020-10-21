@@ -9,7 +9,12 @@ return function(Router $r) {
         $r->get('/home', function(){
             return response("Hello Home");
         })->setName('home');
-        $r->get('/about/{name}', [\Demo\App\Controllers\PageController::class, 'about'])->setName('about');
+        $r->get('/about/{name}', [\Demo\App\Controllers\PageController::class, 'about'])
+            ->setName('about')
+            ->addMiddleware([
+                \Demo\App\Middleware\BeforeMiddleware::class,
+                \Demo\App\Middleware\AfterMiddleware::class,
+            ]);
     });
 
 

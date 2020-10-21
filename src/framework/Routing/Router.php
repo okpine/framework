@@ -94,14 +94,17 @@ class Router
     {
         $previousGroupPrefix = $this->currentGroupPrefix;
         $this->currentGroupPrefix = $previousGroupPrefix . $prefix;
-        $callback($this);
+        $routeGroup = new RouteGroup($this->currentGroupPrefix, $callback);
+        $routeGroup->collectRoutes($this);
         $this->currentGroupPrefix = $previousGroupPrefix;
+        return $routeGroup;
     }
 
     /**
      * @param string|string[] $httpMethod
      * @param string $route
      * @param mixed  $handler
+     * @return Route
      */
     public function request($httpMethod, $route, $handler)
     {

@@ -1,7 +1,14 @@
 <?php
 namespace Demo\Framework\Routing;
 
-class Route
+use Demo\Framework\Foundation\MiddlewareDispatcher;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+use function Demo\Framework\Foundation\container;
+
+class Route implements RequestHandlerInterface
 {
     /**
      * @var string
@@ -33,12 +40,23 @@ class Route
      */
     private $arguments;
 
+    /**
+     * @var array
+     */
+    private $middleware = [];
+
+    /**
+     * @var
+     */
+    private $middlewareDispatcher;
+
 
     public function __construct($method, $uri, $handler)
     {
         $this->method = $method;
         $this->uri = $uri;
         $this->handler = $handler;
+        $this->middlewareDispatcher = new MiddlewareDispatcher($this);
     }
 
     public function getMethod()
@@ -88,4 +106,28 @@ class Route
         $this->arguments = $arguments;
         return $this;
     }
+
+
+    /**
+     * @param string|string[] $middleware
+     */
+    public function addMiddleware($middleware)
+    {
+        $this->middlewareDispatcher->addMiddleware($middleware);
+        return $this;
+    }
+
+
+    public function run(ServerRequestInterface $request): ResponseInterface
+    {
+        return $this->middlewareDispatcher->handle($request);
+    }
+
+
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        container()->set(\Psr\Http\Message\ServerRequestInterface::class, $request);
+        return container()->call($this->getHandler());
+    }
+
 }

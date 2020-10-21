@@ -3,9 +3,7 @@ namespace Demo\Framework\Foundation;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 
 class MiddlewareDispatcher implements RequestHandlerInterface
 {
@@ -15,20 +13,20 @@ class MiddlewareDispatcher implements RequestHandlerInterface
     private $middleware = [];
 
     /**
-     * @var RouteHandler
+     * @var RequestHandlerInterface
      */
-    private $routeHandler;
+    private $fallbackHandler;
 
 
-    public function __construct(RouteHandler $routeHandler)
+    public function __construct(RequestHandlerInterface $fallbackHandler)
     {
-        $this->routeHandler = $routeHandler;
+        $this->fallbackHandler = $fallbackHandler;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (0 === count($this->middleware)) {
-            return $this->routeHandler->handle($request);
+            return $this->fallbackHandler->handle($request);
         }
         $middleware = array_shift($this->middleware);
         $middleware = get($middleware);
@@ -36,9 +34,14 @@ class MiddlewareDispatcher implements RequestHandlerInterface
     }
 
 
-    public function add($middleware)
+    /**
+     * @param string|string[] $middleware
+     */
+    public function addMiddleware($middleware)
     {
-        $this->middleware[] = $middleware;
+        foreach ((array)$middleware as $mw) {
+            $this->middleware[] = $mw;
+        }
         return $this;
     }
 }

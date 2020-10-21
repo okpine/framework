@@ -1,6 +1,7 @@
 <?php
 namespace Demo\Framework\Foundation;
 
+use Demo\Framework\Routing\RouteHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -54,8 +55,8 @@ class WebApplication implements RequestHandlerInterface
         // middleware
         $this->middlewareDispatcher = new MiddlewareDispatcher(new RouteHandler());
         $middleware = require path('config/middleware.php');
-        foreach ($middleware as $m) {
-            $this->middlewareDispatcher->add($m);
+        foreach ($middleware as $mw) {
+            $this->middlewareDispatcher->addMiddleware($mw);
         }
     }
 
