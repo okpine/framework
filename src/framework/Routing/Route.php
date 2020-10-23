@@ -18,7 +18,7 @@ class Route implements RequestHandlerInterface
     /**
      * @var string Uri path
      */
-    private $uri;
+    private $path;
 
     /**
      * @var callable
@@ -51,10 +51,10 @@ class Route implements RequestHandlerInterface
     private $middlewareDispatcher;
 
 
-    public function __construct($method, $uri, $handler)
+    public function __construct($method, $path, $handler)
     {
         $this->method = $method;
-        $this->uri = $uri;
+        $this->path = $path;
         $this->handler = $handler;
         $this->middlewareDispatcher = new MiddlewareDispatcher($this);
     }
@@ -64,9 +64,9 @@ class Route implements RequestHandlerInterface
         return $this->method;
     }
 
-    public function getUri()
+    public function getPath()
     {
-        return $this->uri;
+        return $this->path;
     }
 
     public function getHandler()

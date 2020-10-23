@@ -8,28 +8,79 @@ use function Demo\Framework\Foundation\container;
 
 class RouteGroup
 {
-    private $prefix;
+    use RouteTrait;
 
-    private $callback;
 
+    /**
+     * @var Router
+     */
+    protected $router;
+
+
+    /**
+     * @var callable
+     */
+    protected $callback;
+
+    /**
+     * @var array
+     */
     protected $middleware = [];
 
-    public function __construct($prefix, $callback)
+    public function __construct(Router $router)
     {
-        $this->prefix = $prefix;
-        $this->callback = $callback;
+        $this->router = $router;
     }
 
-    public function addMiddleware($middleware)
+    public function middleware($middleware)
     {
-        $this->middleware[] = $middleware;
+        $this->middleware = $middleware;
         return $this;
     }
 
-    public function collectRoutes(Router $router)
+    public function collectRoutes()
     {
+        /** @var callable $callable */
         $callable = container()->call([CallableResolver::class, 'resolve'], [$this->callback]);
-        $callable($router);
+        $callable($this);
+        $this->router->collectRoutes($this->routeGroups);
+        return $this;
+    }
+
+
+
+    public function group($prefix, $callback)
+    {
+        $prefix = $this->router->joinPath($this->prefix, $prefix);
+        $routeGroup = $this->router->group($prefix, $callback);
+        $this->addRouteGroup($routeGroup);
+        return $routeGroup;
+    }
+
+    /**
+     * @param string|string[] $httpMethod
+     * @param string $route
+     * @param mixed  $handler
+     * @return Route
+     */
+    public function request($httpMethod, $uriPath, $handler)
+    {
+        $uriPath = $this->router->joinPath($this->prefix, $uriPath);
+        $route = $this->router->request($httpMethod, $uriPath, $handler);
+        $this->addRoute($route);
+        return $route;
+    }
+
+
+    public function getCallback()
+    {
+        return $this->callback;
+    }
+
+
+    public function setCallback($callback)
+    {
+        $this->callback = $callback;
         return $this;
     }
 }

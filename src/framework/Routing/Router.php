@@ -10,25 +10,13 @@ use function FastRoute\simpleDispatcher;
 
 class Router
 {
-    /**
-     * @var Route[]
-     */
-    private $routes;
+    use RouteTrait;
 
-    /**
-     * @var int
-     */
-    private $routeCounter = 0;
 
     /**
      * @var \FastRoute\Dispatcher
      */
-    private $routeDispatcher;
-
-    /**
-     * @var string
-     */
-    protected $currentGroupPrefix = '';
+    protected $routeDispatcher;
 
 
     public function routeDispatcher()
@@ -38,14 +26,24 @@ class Router
         }
         $fun = require path('config/routes.php');
         $fun($this);
-        return $this->routeDispatcher = simpleDispatcher([$this, 'collectRoutes']);
+        $this->collectRoutes($this->routeGroups);
+
+        return $this->routeDispatcher = simpleDispatcher([$this, 'addToFastRouteCollector']);
+    }
+
+    public function collectRoutes(array $routeGroups)
+    {
+        foreach ($routeGroups as $group) {
+            $group->collectRoutes();
+        }
+        return $this;
     }
 
 
-    public function collectRoutes(RouteCollector $routeCollector)
+    public function addToFastRouteCollector(RouteCollector $routeCollector)
     {
         foreach ($this->routes as $id => $route) {
-            $routeCollector->addRoute($route->getMethod(), $route->getUri(), $id);
+            $routeCollector->addRoute($route->getMethod(), $route->getPath(), $id);
         }
     }
 
@@ -89,49 +87,38 @@ class Router
         return $route;
     }
 
-
-    public function group($prefix, $callback)
+    public function request($httpMethod, $uriPath, $handler)
     {
-        $previousGroupPrefix = $this->currentGroupPrefix;
-        $this->currentGroupPrefix = $previousGroupPrefix . $prefix;
-        $routeGroup = new RouteGroup($this->currentGroupPrefix, $callback);
-        $routeGroup->collectRoutes($this);
-        $this->currentGroupPrefix = $previousGroupPrefix;
-        return $routeGroup;
-    }
-
-    /**
-     * @param string|string[] $httpMethod
-     * @param string $route
-     * @param mixed  $handler
-     * @return Route
-     */
-    public function request($httpMethod, $route, $handler)
-    {
-        $id = 'route_' . $this->routeCounter++;
-        $route = new Route($httpMethod, $this->currentGroupPrefix . $route, $handler);
+        $route = new Route($httpMethod, $this->joinPath($this->prefix, $uriPath), $handler);
+        $id = $this->routeId();
         $route->setId($id);
-        $this->routes[$id] = $route;
+        $this->addRoute($route);
         return $route;
     }
 
-    public function get($route, $handler)
+    public function group($prefix, $callback)
     {
-        return $this->request('GET', $route, $handler);
+        $routeGroup = new RouteGroup($this);
+        $id = $this->routeGroupId();
+        $routeGroup->setId($id)->setPrefix($prefix)->setCallback($callback);
+        $this->addRouteGroup($routeGroup);
+        return $routeGroup;
     }
 
-    public function post($route, $handler)
+
+    /**
+     * Generate new route id
+     */
+    public function routeId()
     {
-        return $this->request('POST', $route, $handler);
+        return 'route_' . count($this->routes);
     }
 
-    public function redirect($from, $to, int $status = 302)
+    /**
+     * Generate new route group id
+     */
+    public function routeGroupId()
     {
-        # code...
-    }
-
-    public function view($template, $parameters)
-    {
-        # code...
+        return 'route_group_' . count($this->routeGroups);
     }
 }
