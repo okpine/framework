@@ -29,7 +29,7 @@ class Router
         foreach ($this->routeGroups as $group) {
             $group->buildRoutes();
         }
-dd($this);
+
         return $this->routeDispatcher = simpleDispatcher([$this, 'addToFastRouteCollector']);
     }
 

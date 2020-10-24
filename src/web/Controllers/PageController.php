@@ -8,9 +8,9 @@ use function Demo\Framework\Foundation\response;
 
 class PageController
 {
-    public function about(ServerRequestInterface $req)
+    public function about($name, ServerRequestInterface $req)
     {
-        dump($req);
+        dump(func_get_args());
         return response('about');
     }
 }

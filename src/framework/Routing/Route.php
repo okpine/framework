@@ -1,6 +1,7 @@
 <?php
 namespace Demo\Framework\Routing;
 
+use Demo\Framework\Foundation\CallableResolver;
 use Demo\Framework\Foundation\MiddlewareDispatcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,7 +39,7 @@ class Route implements RequestHandlerInterface
     /**
      * @var array
      */
-    private $arguments;
+    private $arguments = [];
 
     /**
      * @var array
@@ -117,7 +118,8 @@ class Route implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         container()->set(\Psr\Http\Message\ServerRequestInterface::class, $request);
-        return container()->call($this->getHandler());
+        $callable = container()->call([CallableResolver::class, 'resolve'], [$this->getHandler()]);
+        return container()->call($callable, $this->getArguments());
     }
 
 
