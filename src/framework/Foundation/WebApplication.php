@@ -52,6 +52,9 @@ class WebApplication implements RequestHandlerInterface
         $container = $builder->build();
         $this->setContainer($container);
 
+        // Load .env
+        $container->get(Env::class)->loadDotEnv();
+
         // middleware
         $this->middlewareDispatcher = new MiddlewareDispatcher(new RouteHandler());
         $middleware = require path('config/middleware.php');

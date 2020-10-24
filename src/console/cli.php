@@ -10,16 +10,9 @@ $projectDir = dirname(__DIR__, 2);
 
 require $projectDir.'/vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable($projectDir);
+$dotenv->load();
 
-function addMiddleware($middleware)
-{
-    $middleware = is_array($middleware) ? $middleware : func_get_args();
-    $a = ['aaa', 'AAA'];
-    array_unshift($a, ... $middleware);
-    return $a;
-}
-
-
-$a = addMiddleware('bbbb' ,'BBBB');
-
-dump($a);
+dump(getenv('APP_ENV'));
+dump($_ENV);
+dump($_SERVER['APP_ENV']);
