@@ -10,19 +10,16 @@ $projectDir = dirname(__DIR__, 2);
 
 require $projectDir.'/vendor/autoload.php';
 
-function joinPath(...$paths)
+
+function addMiddleware($middleware)
 {
-    $result = '';
-    foreach ($paths as $path) {
-        if (substr($result, -1) === '/' && '/' === $path[0]) {
-            $result .= ltrim($path, '/');
-        } else {
-            $result .= $path;
-        }
-        dump($result);
-    }
-    return $result;
+    $middleware = is_array($middleware) ? $middleware : func_get_args();
+    $a = ['aaa', 'AAA'];
+    array_unshift($a, ... $middleware);
+    return $a;
 }
 
-$a = joinPath('/', '/page', '/home');\
+
+$a = addMiddleware('bbbb' ,'BBBB');
+
 dump($a);

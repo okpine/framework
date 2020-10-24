@@ -26,18 +26,13 @@ class Router
         }
         $fun = require path('config/routes.php');
         $fun($this);
-        $this->collectRoutes($this->routeGroups);
-
+        foreach ($this->routeGroups as $group) {
+            $group->buildRoutes();
+        }
+dd($this);
         return $this->routeDispatcher = simpleDispatcher([$this, 'addToFastRouteCollector']);
     }
 
-    public function collectRoutes(array $routeGroups)
-    {
-        foreach ($routeGroups as $group) {
-            $group->collectRoutes();
-        }
-        return $this;
-    }
 
 
     public function addToFastRouteCollector(RouteCollector $routeCollector)

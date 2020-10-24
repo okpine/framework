@@ -31,7 +31,10 @@ return function(Router $router) {
                     })->setName('home');
                 });
             });
-        });
+        })->middleware([
+            \Demo\App\Middleware\BeforeMiddleware::class,
+            \Demo\App\Middleware\AfterMiddleware::class,
+        ]);
     })->middleware([
         \Demo\App\Middleware\BeforeMiddleware::class,
         \Demo\App\Middleware\AfterMiddleware::class,

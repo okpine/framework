@@ -108,16 +108,6 @@ class Route implements RequestHandlerInterface
     }
 
 
-    /**
-     * @param string|string[] $middleware
-     */
-    public function addMiddleware($middleware)
-    {
-        $this->middlewareDispatcher->addMiddleware($middleware);
-        return $this;
-    }
-
-
     public function run(ServerRequestInterface $request): ResponseInterface
     {
         return $this->middlewareDispatcher->handle($request);
@@ -128,6 +118,28 @@ class Route implements RequestHandlerInterface
     {
         container()->set(\Psr\Http\Message\ServerRequestInterface::class, $request);
         return container()->call($this->getHandler());
+    }
+
+
+    /**
+     * @param string|string[] $middleware
+     */
+    public function addMiddleware($middleware)
+    {
+        $middleware = is_array($middleware) ? $middleware : func_get_args();
+        $this->middlewareDispatcher->addMiddleware($middleware);
+        return $this;
+    }
+
+
+    /**
+     * @param string|string[] $middleware
+     */
+    public function prependMiddleware($middleware)
+    {
+        $middleware = is_array($middleware) ? $middleware : func_get_args();
+        $this->middlewareDispatcher->prependMiddleware($middleware);
+        return $this;
     }
 
 }

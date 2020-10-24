@@ -32,21 +32,20 @@ class RouteGroup
         $this->router = $router;
     }
 
-    public function middleware($middleware)
-    {
-        $this->middleware = $middleware;
-        return $this;
-    }
 
-    public function collectRoutes()
+    public function buildRoutes()
     {
         /** @var callable $callable */
         $callable = container()->call([CallableResolver::class, 'resolve'], [$this->callback]);
         $callable($this);
-        $this->router->collectRoutes($this->routeGroups);
+        foreach ($this->routes as $route) {
+            $route->prependMiddleware($this->middleware);
+        }
+        foreach ($this->routeGroups as $group) {
+            $group->prependMiddleware($this->middleware)->buildRoutes();
+        }
         return $this;
     }
-
 
 
     public function group($prefix, $callback)
@@ -81,6 +80,38 @@ class RouteGroup
     public function setCallback($callback)
     {
         $this->callback = $callback;
+        return $this;
+    }
+
+
+    /**
+     * @param string|string[] $middleware
+     */
+    public function middleware($middleware)
+    {
+        $middleware = is_array($middleware) ? $middleware : func_get_args();
+        $this->middleware = $middleware;
+        return $this;
+    }
+
+
+    /**
+     * @param string|string[] $middleware
+     */
+    public function addMiddleware($middleware)
+    {
+        $middleware = is_array($middleware) ? $middleware : func_get_args();
+        array_push($this->middleware, ...$middleware);
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $middleware
+     */
+    public function prependMiddleware($middleware)
+    {
+        $middleware = is_array($middleware) ? $middleware : func_get_args();
+        array_unshift($this->middleware, ...$middleware);
         return $this;
     }
 }

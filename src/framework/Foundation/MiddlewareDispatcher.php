@@ -39,9 +39,18 @@ class MiddlewareDispatcher implements RequestHandlerInterface
      */
     public function addMiddleware($middleware)
     {
-        foreach ((array)$middleware as $mw) {
-            $this->middleware[] = $mw;
-        }
+        $middleware = is_array($middleware) ? $middleware : func_get_args();
+        array_push($this->middleware, ...$middleware);
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $middleware
+     */
+    public function prependMiddleware($middleware)
+    {
+        $middleware = is_array($middleware) ? $middleware : func_get_args();
+        array_unshift($this->middleware, ...$middleware);
         return $this;
     }
 }
