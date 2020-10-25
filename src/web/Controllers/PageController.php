@@ -7,13 +7,19 @@ use Psr\Http\Message\ServerRequestInterface;
 
 use function Demo\Framework\Foundation\env;
 use function Demo\Framework\Foundation\response;
+use function Demo\Framework\Foundation\view;
 
 class PageController
 {
+    public function home()
+    {
+        return view("@frontend/home.twig");
+    }
+
     public function about($name, ServerRequestInterface $req)
     {
-        dump(func_get_args());
-        dump(env('APP_ENV'));
-        return response('about');
+       // setcookie('name', 'Tom', time()+60);
+       // dump(php_uname());
+        return response('about ' . $name);
     }
 }

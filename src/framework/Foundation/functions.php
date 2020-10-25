@@ -1,6 +1,8 @@
 <?php
 namespace Demo\Framework\Foundation;
 
+use Demo\Framework\Template\Twig;
+
 function app()
 {
     return WebApplication::getInstance();
@@ -59,6 +61,16 @@ function redirect($url = '/', $status = 302)
  */
 function env($key)
 {
-return get(Env::class)->get($key);
+    return get(Env::class)->get($key);
+}
+
+function view()
+{
+    return twigView(...func_get_args());
+}
+
+function twigView($template, array $parameters = [])
+{
+    return response(get(Twig::class)->render($template, $parameters));
 }
 

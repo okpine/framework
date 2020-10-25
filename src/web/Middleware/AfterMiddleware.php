@@ -11,6 +11,8 @@ class AfterMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        return $handler->handle($request);
+
         $response = $handler->handle($request);
         $response->getBody()->write(' AFTER');
         return $response;

@@ -12,6 +12,8 @@ class BeforeMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        return $handler->handle($request);
+
         $response = $handler->handle($request);
         $existingContent = (string) $response->getBody();
 

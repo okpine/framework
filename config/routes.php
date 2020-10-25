@@ -6,11 +6,17 @@ use Demo\Framework\Routing\Router;
 use function Demo\Framework\Foundation\response;
 
 return function(Router $router) {
+    $router->get('/', [\Demo\App\Controllers\PageController::class, 'home'])
+            ->setName('home')
+            ->addMiddleware([
+                \Demo\App\Middleware\BeforeMiddleware::class,
+                \Demo\App\Middleware\AfterMiddleware::class,
+            ]);
     $router->group('/page', function(RouteGroup $group){
         $group->get('/home', function(){
             return response("Hello Home");
         })->setName('home');
-        $group->get('/about/{name}', [\Demo\App\Controllers\PageController::class, 'about'])
+        $group->get('/about/{name}/', [\Demo\App\Controllers\PageController::class, 'about'])
             ->setName('about')
             ->addMiddleware([
                 \Demo\App\Middleware\BeforeMiddleware::class,

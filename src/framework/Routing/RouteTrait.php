@@ -6,7 +6,7 @@ trait RouteTrait
     /**
      * @var string
      */
-    protected $prefix = '/frontend';
+    protected $prefix = '';
 
 
     /**
