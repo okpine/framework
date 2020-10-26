@@ -2,6 +2,8 @@
 namespace Demo\App\Controllers;
 
 use Demo\Framework\Foundation\Env;
+use Demo\Framework\Routing\Router;
+use Demo\Framework\Routing\UrlGenerator;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -11,15 +13,15 @@ use function Demo\Framework\Foundation\view;
 
 class PageController
 {
-    public function home()
+    public function home(ServerRequestInterface $request)
     {
+        dump($request);
         return view("@frontend/home.twig");
     }
 
-    public function about($name, ServerRequestInterface $req)
+    public function about(UrlGenerator $url)
     {
-       // setcookie('name', 'Tom', time()+60);
-       // dump(php_uname());
-        return response('about ' . $name);
+        dump($url->routeUrl('about', [], ['name'=>'Tom']));
+        return response('about');
     }
 }

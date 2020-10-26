@@ -31,10 +31,18 @@ class WebApplication implements RequestHandlerInterface
 
     public function run()
     {
-        $this->boot();
-        $request = $this->createRequestFromGlobals();
-        $response = $this->handle($request);
-        $this->sendResponse($response);
+        try {
+            $this->boot();
+            $request = $this->createRequestFromGlobals();
+            ob_start();
+            $response = $this->handle($request);
+            $output = ob_get_clean();
+            $response->getBody()->write($output);
+            $this->sendResponse($response);
+        } catch (\Throwable $exception) {
+            return require path('templates/frontend/app-error.php');
+        }
+
     }
 
 

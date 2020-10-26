@@ -53,7 +53,10 @@ class Router
         $routeInfo = $this->routeDispatcher()->dispatch($request->getMethod(), rawurldecode($uri));
         switch ($routeInfo[0]) {
             case \FastRoute\Dispatcher::FOUND:
-                return $this->findRoute($routeInfo);
+                $id = $routeInfo[1];
+                $route = $this->routes[$id];
+                $route->setArguments($routeInfo[2]);
+                return $route;
                 break;
             case \FastRoute\Dispatcher::NOT_FOUND:
                 $exception = new RuntimeException('The requested resource could not be found. Please verify the URI and try again.');
@@ -73,13 +76,17 @@ class Router
         }
     }
 
-
-    public function findRoute(array $routeInfo)
+    /**
+     * @var string $name Route Name
+     */
+    public function getNamedRoute(string $name)
     {
-        $id = $routeInfo[1];
-        $route = $this->routes[$id];
-        $route->setArguments($routeInfo[2]);
-        return $route;
+        foreach ($this->routes as $route) {
+            if ($name === $route->getName()) {
+                return $route;
+            }
+        }
+        throw new RuntimeException('Named route does not exist for name: ' . $name);
     }
 
     public function request($httpMethod, $uriPath, $handler)

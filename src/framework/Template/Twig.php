@@ -19,7 +19,7 @@ class Twig
         $loader->addPath('templates/backend', 'backend');
         $this->loader = $loader;
         $this->environment = new Environment($loader, [
-            'cache' => 'var/twig-caches',
+            'cache' => path('var/twig-caches'),
         ]);
     }
 
