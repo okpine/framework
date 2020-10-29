@@ -10,4 +10,7 @@ return function(Router $router) {
 
     $router->get('/about', 'Demo\App\Controllers\PageController::about')
         ->setName('about');
+
+    $router->post('/receive-data', 'Demo\App\Controllers\PageController::receiveData')->setName('receive-data');
+
 };

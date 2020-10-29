@@ -8,11 +8,7 @@ use function DI\get;
 $projectDir = dirname(__DIR__);
 
 return [
-    'db' => [
-        'host' => 'localhost',
-        'port' => 3306,
-    ],
-    \Psr\Log\LoggerInterface::class => autowire(\Monolog\Logger::class)->constructor('App Log')->method('pushHandler', create(\Monolog\Handler\StreamHandler::class)->constructor($projectDir.'/logs/app.log')),
+    \Psr\Log\LoggerInterface::class => autowire(\Monolog\Logger::class)->constructor('App Log')->method('pushHandler', create(\Monolog\Handler\StreamHandler::class)->constructor($projectDir.'/var/logs/app.log')),
     \Psr\Http\Message\ServerRequestFactoryInterface::class => get(\Nyholm\Psr7\Factory\Psr17Factory::class),
     \Psr\Http\Message\RequestFactoryInterface::class => get(\Nyholm\Psr7\Factory\Psr17Factory::class),
     \Psr\Http\Message\ResponseFactoryInterface::class => get(\Nyholm\Psr7\Factory\Psr17Factory::class),
